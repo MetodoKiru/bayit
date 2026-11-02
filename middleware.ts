@@ -1,29 +1,12 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  let response=NextResponse.next({request});
-  const url=process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if(!url || !key) return response;
-
-  const supabase=createServerClient(url,key,{
-    cookies:{
-      getAll:()=>request.cookies.getAll(),
-      setAll(cookiesToSet){
-        cookiesToSet.forEach(({name,value})=>request.cookies.set(name,value));
-        response=NextResponse.next({request});
-        cookiesToSet.forEach(({name,value,options})=>response.cookies.set(name,value,options));
-      }
-    }
-  });
-  try {
-    await supabase.auth.getUser();
-  } catch (error) {
-    // Authentication refresh must never take the whole site down.
-    console.error("[Bayit middleware] Supabase session check failed:", error);
-  }
-  return response;
+// Keep the request pipeline independent from Supabase while the Edge
+// middleware failure is isolated. Authentication is still enforced by the
+// app's server-side data/RLS checks; this middleware only handled refresh.
+export function middleware(_request: NextRequest) {
+  return NextResponse.next();
 }
 
-export const config={matcher:["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"]};
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+};
