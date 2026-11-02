@@ -7,7 +7,10 @@ export const metadata: Metadata = {
   description: "Calendarios y organización familiar, con privacidad para cada hogar.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Bayit" },
-  icons: { icon: "/icons/bayit.svg" },
+  icons: {
+    icon: [{ url: "/icons/bayit.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }]
+  },
 };
 export const viewport: Viewport = {
   themeColor: "#F7F6F2",
