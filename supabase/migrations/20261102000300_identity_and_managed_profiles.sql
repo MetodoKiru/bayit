@@ -216,6 +216,80 @@ create table if not exists public.profile_representatives (
   check (profile_id <> representative_profile_id),
   unique(profile_id, representative_profile_id, family_id)
 );
+-- Reconcile the earlier proposal table if migration 002 created its legacy
+-- representative_user_id / auth.users shape. Profile IDs remain stable in
+-- this migration, so existing auth user IDs map to the same profile IDs.
+alter table public.profile_representatives
+  add column if not exists representative_profile_id uuid;
+
+do $
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='profile_representatives'
+      and column_name='representative_user_id'
+  ) then
+    update public.profile_representatives pr
+    set representative_profile_id = p.id
+    from public.profiles p
+    where p.auth_user_id = pr.representative_user_id
+      and pr.representative_profile_id is null;
+
+    if exists (
+      select 1 from public.profile_representatives
+      where representative_profile_id is null
+    ) then
+      raise exception 'No se pudo asociar cada representante con un perfil de Bayit.';
+    end if;
+
+    alter table public.profile_representatives
+      drop column representative_user_id;
+  end if;
+
+  -- created_by used to reference auth.users; it now references profile identity.
+  if exists (
+    select 1 from pg_constraint
+    where conrelid='public.profile_representatives'::regclass
+      and conname='profile_representatives_created_by_fkey'
+  ) then
+    alter table public.profile_representatives
+      drop constraint profile_representatives_created_by_fkey;
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid='public.profile_representatives'::regclass
+      and conname='profile_representatives_created_by_fkey'
+  ) then
+    alter table public.profile_representatives
+      add constraint profile_representatives_created_by_fkey
+      foreign key (created_by) references public.profiles(id);
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid='public.profile_representatives'::regclass
+      and conname='profile_representatives_representative_profile_id_fkey'
+  ) then
+    alter table public.profile_representatives
+      add constraint profile_representatives_representative_profile_id_fkey
+      foreign key (representative_profile_id) references public.profiles(id) on delete cascade;
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid='public.profile_representatives'::regclass
+      and conname='profile_representatives_profile_rep_family_key'
+  ) then
+    alter table public.profile_representatives
+      add constraint profile_representatives_profile_rep_family_key
+      unique (profile_id, representative_profile_id, family_id);
+  end if;
+end $;
+
+alter table public.profile_representatives
+  alter column representative_profile_id set not null;
+
 create index if not exists profile_representatives_profile_idx
   on public.profile_representatives(profile_id);
 create index if not exists profile_representatives_representative_idx
