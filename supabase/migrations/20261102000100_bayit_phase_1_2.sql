@@ -125,6 +125,26 @@ begin
 end;
 $$;
 
+-- RLS helper: SECURITY DEFINER is narrowly scoped to avoid recursive policies
+-- on family_members. It returns only whether the current user is an active member.
+create or replace function public.bayit_is_active_member(p_family_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1
+    from public.family_members fm
+    where fm.family_id = p_family_id
+      and fm.profile_id = (select auth.uid())
+      and fm.status = 'active'
+  );
+$;
+revoke all on function public.bayit_is_active_member(uuid) from public;
+grant execute on function public.bayit_is_active_member(uuid) to authenticated;
+
 alter table public.profiles enable row level security;
 alter table public.families enable row level security;
 alter table public.family_members enable row level security;
@@ -135,12 +155,10 @@ for select to authenticated
 using (
   id = (select auth.uid())
   or exists (
-    select 1 from public.family_members mine
-    join public.family_members theirs on theirs.family_id = mine.family_id
-    where mine.profile_id = (select auth.uid())
-      and mine.status = 'active'
-      and theirs.profile_id = profiles.id
+    select 1 from public.family_members theirs
+    where theirs.profile_id = profiles.id
       and theirs.status = 'active'
+      and public.bayit_is_active_member(theirs.family_id)
   )
 );
 
@@ -153,12 +171,7 @@ with check (id = (select auth.uid()));
 drop policy if exists "families_read_members" on public.families;
 create policy "families_read_members" on public.families
 for select to authenticated
-using (exists (
-  select 1 from public.family_members fm
-  where fm.family_id = families.id
-    and fm.profile_id = (select auth.uid())
-    and fm.status = 'active'
-));
+using (public.bayit_is_active_member(families.id));
 
 drop policy if exists "families_update_admins" on public.families;
 create policy "families_update_admins" on public.families
@@ -181,12 +194,7 @@ with check (exists (
 drop policy if exists "family_members_read_household" on public.family_members;
 create policy "family_members_read_household" on public.family_members
 for select to authenticated
-using (exists (
-  select 1 from public.family_members mine
-  where mine.family_id = family_members.family_id
-    and mine.profile_id = (select auth.uid())
-    and mine.status = 'active'
-));
+using (public.bayit_is_active_member(family_members.family_id));
 
 -- Direct client-side inserts/deletes are intentionally disallowed.
 revoke all on function public.bayit_create_family(text,text) from public;
