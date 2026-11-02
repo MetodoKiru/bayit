@@ -11,12 +11,17 @@ const demoCalendars=[{name:"Mi calendario",color:palette[0]},{name:"Hogar",color
 export default function CalendarPage(){
  const [view,setView]=useState<"month"|"week">("month");
  const [date,setDate]=useState(()=>new Date());
- const [quickEvents,setQuickEvents]=useState<EventItem[]>([]);\n const [planningEvents,setPlanningEvents]=useState<EventItem[]>([]);\n const events=[...quickEvents,...planningEvents];
+ const [quickEvents,setQuickEvents]=useState<EventItem[]>([]);
+ const [planningEvents,setPlanningEvents]=useState<EventItem[]>([]);
+ const events=[...quickEvents,...planningEvents];
  const [showEvents,setShowEvents]=useState(true);
  const [ready,setReady]=useState(false);
  const year=date.getFullYear(),month=date.getMonth();
  useEffect(()=>{try{const a=JSON.parse(localStorage.getItem("bayit-quick-events")||"[]");const b=JSON.parse(localStorage.getItem("bayit-planning-confirmed")||"[]");setQuickEvents(Array.isArray(a)?a:[]);setPlanningEvents(Array.isArray(b)?b:[]);}catch{setQuickEvents([]);setPlanningEvents([]);}setReady(true);},[]);
- const monthDays=useMemo(()=>{const first=new Date(year,month,1);const start=(first.getDay()+6)%7;const count=new Date(year,month+1,0).getDate();return [...Array(start).fill(null),...Array.from({length:count},(_,i)=>i+1)];},[year,month]);\n const weekStart=new Date(date);weekStart.setDate(date.getDate()-((date.getDay()+6)%7));\n const weekDays=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return d;});\n const days=view==="month"?monthDays:weekDays.map(d=>d.getDate());
+ const monthDays=useMemo(()=>{const first=new Date(year,month,1);const start=(first.getDay()+6)%7;const count=new Date(year,month+1,0).getDate();return [...Array(start).fill(null),...Array.from({length:count},(_,i)=>i+1)];},[year,month]);
+ const weekStart=new Date(date);weekStart.setDate(date.getDate()-((date.getDay()+6)%7));
+ const weekDays=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return d;});
+ const days=view==="month"?monthDays:weekDays.map(d=>d.getDate());
  const label=new Intl.DateTimeFormat("es-ES",{month:"long",year:"numeric"}).format(date);
  const move=(n:number)=>setDate(current=>{const next=new Date(current);if(view==="week")next.setDate(current.getDate()+n*7);else next.setMonth(current.getMonth()+n,1);return next;});
  const byDay=useMemo(()=>{const map=new Map<string,EventItem[]>();for(const e of events){if(!e.date)continue;map.set(e.date,[...(map.get(e.date)||[]),e]);}return map;},[events]);
