@@ -31,6 +31,5 @@ export default function PlanningPage(){
    <div className="flex flex-wrap items-center justify-between gap-3"><p className="max-w-md text-xs leading-5 text-bayit-muted">La planificación se guarda en tu perfil. No se comparte automáticamente con otros hogares.</p><button className="rounded-full bg-bayit-brown px-7 py-3.5 text-sm text-white">Guardar planificación</button></div>
    {message&&<p role="status" className="rounded-xl bg-white p-4 text-sm">{message}</p>}{saved&&<p className="rounded-xl bg-white p-4 text-sm text-bayit-olive">Guardado correctamente.</p>}
  </form>}
-  </form>
  </div></main>;
 }
