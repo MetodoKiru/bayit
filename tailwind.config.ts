@@ -4,16 +4,23 @@ const config: Config = {
   theme: { extend: {
     colors: {
       bayit: {
-        cream: "#F6F2EA",
-        sand: "#E8DDCC",
-        paper: "#FFFEFB",
-        brown: "#49372D",
-        muted: "#8B7B6C",
-        olive: "#788064",
-        line: "#E7E0D6"
+        cream: "#F8F9FC",
+        sand: "#EEF1F7",
+        paper: "#FFFFFF",
+        brown: "#45485A",
+        muted: "#85899A",
+        olive: "#7D8BA6",
+        line: "#E7EAF1",
+        sky: "#A9C7E8",
+        lavender: "#C5B8E8",
+        rose: "#E9B9C5",
+        peach: "#F0C6A8",
+        butter: "#E9D99D",
+        sage: "#B9C9B1",
+        mint: "#A9D3C5"
       }
     },
-    boxShadow: { soft: "0 12px 40px rgba(73,55,45,.07)" }
+    boxShadow: { soft: "0 12px 40px rgba(69,72,90,.07)" }
   }},
   plugins: []
 };
