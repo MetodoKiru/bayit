@@ -285,6 +285,16 @@ begin
       add constraint profile_representatives_profile_rep_family_key
       unique (profile_id, representative_profile_id, family_id);
   end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid='public.profile_representatives'::regclass
+      and conname='profile_representatives_distinct_profiles_check'
+  ) then
+    alter table public.profile_representatives
+      add constraint profile_representatives_distinct_profiles_check
+      check (profile_id <> representative_profile_id);
+  end if;
 end $;
 
 alter table public.profile_representatives
