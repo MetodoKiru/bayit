@@ -31,6 +31,7 @@ export default function LoginPage() {
         {message && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{message}</p>}
         <button disabled={loading} className="w-full rounded-full bg-bayit-brown px-5 py-3.5 text-sm font-medium text-white disabled:opacity-60">{loading?"Entrando…":"Iniciar sesión"}</button>
       </form>
+      <p className="mt-4 text-center text-xs text-bayit-muted"><Link href="/forgot-password" className="underline underline-offset-4">¿Has olvidado tu contraseña?</Link></p>
       <p className="mt-7 text-center text-xs text-bayit-muted">¿Todavía no tienes cuenta? <Link href="/signup" className="underline underline-offset-4">Crear una cuenta</Link></p>
       <p className="mt-4 text-center text-xs text-bayit-muted"><Link href="/" className="underline underline-offset-4">Volver a Bayit</Link></p>
     </div>
