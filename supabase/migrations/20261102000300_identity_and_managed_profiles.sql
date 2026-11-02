@@ -69,7 +69,7 @@ begin
   );
   insert into public.profiles(id, auth_user_id, display_name)
   values (gen_random_uuid(), new.id, left(v_name,80))
-  on conflict (auth_user_id) do nothing;
+  on conflict (auth_user_id) where auth_user_id is not null do nothing;
   return new;
 end;
 $$;
