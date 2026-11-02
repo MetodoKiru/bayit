@@ -17,7 +17,12 @@ export async function middleware(request: NextRequest) {
       }
     }
   });
-  await supabase.auth.getUser();
+  try {
+    await supabase.auth.getUser();
+  } catch (error) {
+    // Authentication refresh must never take the whole site down.
+    console.error("[Bayit middleware] Supabase session check failed:", error);
+  }
   return response;
 }
 
