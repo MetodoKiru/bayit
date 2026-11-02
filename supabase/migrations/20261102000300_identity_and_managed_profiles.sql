@@ -222,7 +222,7 @@ create table if not exists public.profile_representatives (
 alter table public.profile_representatives
   add column if not exists representative_profile_id uuid;
 
-do $
+do $bayit$
 begin
   if exists (
     select 1 from information_schema.columns
@@ -295,7 +295,7 @@ begin
       add constraint profile_representatives_distinct_profiles_check
       check (profile_id <> representative_profile_id);
   end if;
-end $;
+end $bayit$;
 
 alter table public.profile_representatives
   alter column representative_profile_id set not null;
