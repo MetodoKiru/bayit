@@ -7,7 +7,17 @@ const swatches=["#A9C7E8","#C5B8E8","#E9B9C5","#F0C6A8","#E9D99D","#B9C9B1","#A9
 export default function Home() {
   return <main className="min-h-screen bg-bayit-cream px-5 py-6 sm:px-10 sm:py-8">
     <nav className="mx-auto flex max-w-6xl items-center justify-between">
-      <a href="/" className="text-2xl font-semibold tracking-tight text-bayit-brown">bayit</a>
+      <a href="/" className="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-bayit-brown" aria-label="Bayit, inicio">
+        <svg aria-hidden="true" viewBox="0 0 64 64" className="h-10 w-10" fill="none">
+          <g stroke="#56758F" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 34V22L19 10L33 22V34" />
+            <path d="M31 34V22L45 10L59 22V34" />
+            <path d="M16 48V29L32 15L48 29V48" />
+          </g>
+          <g fill="#8EABC1"><rect x="27" y="33" width="4" height="4" rx="1"/><rect x="33" y="33" width="4" height="4" rx="1"/><rect x="27" y="39" width="4" height="4" rx="1"/><rect x="33" y="39" width="4" height="4" rx="1"/></g>
+        </svg>
+        <span>Bayit</span>
+      </a>
       <div className="flex items-center gap-3"><a href="/login" className="rounded-full px-4 py-2 text-sm text-bayit-muted hover:bg-white">Iniciar sesión</a><a href="/signup" className="rounded-full bg-bayit-brown px-5 py-2.5 text-sm text-white">Crear cuenta</a></div>
     </nav>
     <section className="mx-auto grid max-w-6xl gap-12 pb-20 pt-16 md:grid-cols-[1.1fr_.9fr] md:items-center md:pt-24">
