@@ -1,0 +1,16 @@
+{
+  "name": "Bayit — Muchos hogares. Una vida compartida.",
+  "short_name": "Bayit",
+  "description": "Calendarios y organización familiar, con privacidad para cada hogar.",
+  "lang": "es",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FC",
+  "theme_color": "#F8F9FC",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/bayit-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/bayit-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
