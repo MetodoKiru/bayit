@@ -31,7 +31,7 @@ export default function HouseholdDashboard({email}:{email:string}) {
   }
   async function loadMembers(familyId:string) {
     if(!familyId){setMembers([]);return;}
-    const {data,error}=await supabase.from("family_members").select("id,role,profile:profiles(id,display_name,calendar_color)").eq("family_id",familyId).eq("status","active").order("created_at");
+    const {data,error}=await supabase.from("family_members").select("id,role,profile:profiles!family_members_profile_id_fkey(id,display_name,calendar_color)").eq("family_id",familyId).eq("status","active").order("created_at");
     if(error){setMessage(error.message);return;}
     setMembers((data??[]) as unknown as Member[]);
   }
